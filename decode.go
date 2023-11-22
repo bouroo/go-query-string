@@ -9,7 +9,7 @@ import (
 
 func Unmarshal(data string, v any) error {
 	d := newDecoder(data, v)
-	return d.do()
+	return d.Do()
 }
 
 type decode struct {
@@ -30,7 +30,7 @@ func (d *decode) error(err error) {
 	panic(decodeError{err})
 }
 
-func (d *decode) do() (err error) {
+func (d *decode) Do() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if je, ok := r.(decodeError); ok {

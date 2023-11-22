@@ -296,3 +296,26 @@ func BenchmarkUnmarshal(b *testing.B) {
 		}
 	})
 }
+
+func BenchmarkDecoderPool(b *testing.B) {
+	type QueryParams struct {
+		Text       string `query:"text"`
+		ID         string
+		Number     int64
+		Vat        float64
+		MiddleName *string
+	}
+
+	dp := &query.DecoderPool{}
+
+	b.ReportAllocs()
+	b.StartTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			var actual QueryParams
+			decoder := dp.Get("text=TEXT&id=1234567&number=0&vat=1.1", &actual)
+			defer dp.Put(decoder)
+			_ = decoder.Do()
+		}
+	})
+}

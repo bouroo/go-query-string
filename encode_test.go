@@ -270,3 +270,29 @@ func BenchmarkMarshal(b *testing.B) {
 		}
 	})
 }
+
+func BenchmarkEncoderPool(b *testing.B) {
+	type QueryParams struct {
+		text   string `query:"text"`
+		ID     string
+		Number int64
+		vat    float64
+	}
+
+	ep := &query.EncoderPool{}
+
+	b.ReportAllocs()
+	b.StartTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			encoder := ep.Get(QueryParams{
+				text:   "TEXT",
+				ID:     "1234567",
+				Number: 0,
+				vat:    1.1,
+			})
+			defer ep.Put(encoder)
+			_, _ = encoder.Do()
+		}
+	})
+}

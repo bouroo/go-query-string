@@ -9,7 +9,7 @@ import (
 
 func Marshal(v any) (string, error) {
 	e := newEncoder(v)
-	return e.do()
+	return e.Do()
 }
 
 type encode struct {
@@ -36,7 +36,7 @@ func (e *encode) error(err error) {
 	panic(encodeError{err})
 }
 
-func (e *encode) do() (query string, err error) {
+func (e *encode) Do() (query string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			if je, ok := r.(encodeError); ok {
